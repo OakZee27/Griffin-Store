@@ -175,7 +175,7 @@
             rows.forEach(row => {
                 const title = (row.c[0] && row.c[0].f) ? row.c[0].f : ((row.c[0] && row.c[0].v) ? row.c[0].v : '');
                 const price = (row.c[1] && row.c[1].f) ? row.c[1].f : ((row.c[1] && row.c[1].v) ? row.c[1].v : '');
-                const desc = (row.c[2] && row.c[2].v) ? row.c[2].v : '';
+                const desc = (row.c[2] ? String(row.c[2].v || row.c[2].f || '').trim() : '');
                 const cat = (row.c[3] && row.c[3].v) ? row.c[3].v : '';
                 
                 if(title) {
@@ -214,7 +214,7 @@
                             <span class="category">${item.cat || 'فئة غير محددة'}</span>
                         </div>
                         <h3>${item.title}</h3>
-                        <p>${item.desc}</p>
+                        <p>${item.desc.startsWith('http') ? `<a href="${item.desc}" target="_blank" class="spec-btn">عرض جميع التفاصيل</a>` : item.desc}</p>
                         <div class="card-footer">
                             <div class="price">${isNaN(item.price) || item.price.includes('$') ? item.price : item.price + ' ل.س '}</div>
                         </div>
