@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Griffin Store</title>
+    <style>
+        :root {
+            --bg-color: #0f1115;
+            --card-bg: #161920;
+            --text-color: #f1f5f9;
+            --accent-color: #ffb703;
+            --price-color: #00b4d8;
+            --border-color: #242936;
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            font-family: system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            text-align: center; 
+        }
+
+        h1 { 
+            color: var(--accent-color); 
+            margin-bottom: 5px;
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .tabs-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tab-btn {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 20px; 
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card { 
+            background-color: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 20px; 
+            width: 280px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            text-align: right; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            border-color: #3b4252;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .category { 
+            background: #242936; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 0.75rem; 
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        h3 {
+            margin: 0 0 10px 0;
+            color: #ffffff;
+            font-size: 1.25rem;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin: 0;
+            white-space: pre-line;
+            flex-grow: 1;
+        }
+
+        .card-footer {
+            margin-top: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price { 
+            color: var(--price-color); 
+            font-weight: bold; 
+            font-size: 1.3rem; 
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Griffin Store</h1>
+    <p class="subtitle">أهلاً وسهلاً بكم في متجر Griffin</p>
+    
+    <div class="tabs-container" id="tabs-container">
+        <button class="tab-btn active" onclick="filterCategory('all')">الكل</button>
+    </div>
+
+    <div class="grid" id="products-container">جار التحميل...</div>
+
+    <script>
+        const SHEET_ID = '17lmkvaFHURGtbtXZZxUJz8VNia0PoYA_I0OE3mWrCYI'; 
+        const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json';
+
+        let allProducts = [];
+
+        fetch(url)
+        .then(res => res.text())
+        .then(data => {
+            const jsonString = data.match(/\{.*\}/s)[0];
+            const json = JSON.parse(jsonString);
+            const rows = json.table.rows;
+            console.log('Loaded products:', rows);
+            
+            let categories = new Set();
+            allProducts = [];
+
+            rows.forEach(row => {
+                const title = (row.c[0] && row.c[0].f) ? row.c[0].f : ((row.c[0] && row.c[0].v) ? row.c[0].v : '');
+                const price = (row.c[1] && row.c[1].f) ? row.c[1].f : ((row.c[1] && row.c[1].v) ? row.c[1].v : '');
+                const desc = (row.c[2] && row.c[2].v) ? row.c[2].v : '';
+                const cat = (row.c[3] && row.c[3].v) ? row.c[3].v : '';
+                
+                if(title) {
+                    allProducts.push({ title, price, desc, cat });
+                    if(cat.trim() !== '') {
+                        categories.add(cat.trim());
+                    }
+                }
+            });
+
+            const tabsContainer = document.getElementById('tabs-container');
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'tab-btn';
+                button.innerText = category;
+                button.setAttribute('onclick', `filterCategory('${category}')`);
+                tabsContainer.appendChild(button);
+            });
+
+            displayProducts(allProducts);
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('products-container').innerHTML = 'عذراً، حدث خطأ أثناء تحميل المنتجات. يرجى المحاولة لاحقاً أو تفعيل VPN.';
+        });
+
+        function displayProducts(products) {
+            let html = '';
+            if(products.length === 0) {
+                html = '<p>لا توجد منتجات متوفرة في هذا القسم.</p>';
+            } else {
+                products.forEach(item => {
+                    html += `
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="category">${item.cat || 'فئة غير محددة'}</span>
+                        </div>
+                        <h3>${item.title}</h3>
+                        <p>${item.desc}</p>
+                        <div class="card-footer">
+                            <div class="price">${isNaN(item.price) || item.price.includes('$') ? item.price : item.price + ' ل.س '}</div>
+                        </div>
+                    </div>`;
+                });
+            }
+            document.getElementById('products-container').innerHTML = html;
+        }
+
+        function filterCategory(category) {
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            const clickedBtn = window.event ? window.event.target : null;
+            if(clickedBtn) clickedBtn.classList.add('active');
+
+            if(category === 'all') {
+                displayProducts(allProducts);
+            } else {
+                const filtered = allProducts.filter(p => p.cat.trim() === category.trim());
+                displayProducts(filtered);
+            }
+        }
+    </script>
+</body>
+</html>
