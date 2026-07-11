@@ -160,13 +160,22 @@
             background-color: #ffd278;
         }
         .header-container {
+            position: relative;
             display: flex;
-            flex-direction: row;
-            align-items: center;
             justify-content: center;
-            gap: 15px;
+            align-items: center;
+            width: 100%;
+            padding: 20px 0;
         }
+
+        .header-container h1 {
+            margin: 0;
+            text-align: center;
+        }
+
         .header-container img {
+            position: absolute;
+            left: calc(50% + 140px); 
             width: 120px;
             height: auto;
         }
