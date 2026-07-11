@@ -142,14 +142,32 @@
             font-weight: bold; 
             font-size: 1.3rem; 
         }
+
+        .spec-btn {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 13px;
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+        }
+
+        .spec-btn:hover {
+            background-color: #ffd278;
+        }
     </style>
 </head>
 <body>
-
+    <div class="logo-container">
+        <img src="Griffin.png" alt="Griffin Logo" style="width: 120px; height: auto; margin-bottom: 20px;">
+    </div>
     <h1>Griffin Store</h1>
-    <p class="subtitle">أهلاً وسهلاً بكم في متجر المهندس زين العابدين دغمه</p>
+    <p class="subtitle">أهلاً وسهلاً بكم في متجر المهندس زين العابدين دغمه!</p>
     <p class="subtitle">الاسعار بالليرة السورية الجديدة</p>
-    
     <div class="tabs-container" id="tabs-container">
         <button class="tab-btn active" onclick="filterCategory('all')">الكل</button>
     </div>
